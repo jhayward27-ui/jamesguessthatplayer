@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sports Guess — 20 Questions</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      background: #0f1419; color: #e8eef4;
+      font-family: system-ui, "Segoe UI", sans-serif;
+      padding: 24px;
+      line-height: 1.45;
+    }
+    h1 { margin: 0 0 8px; font-size: 1.5rem; }
+    .sub { color: #8b9aab; font-size: 0.9rem; margin-bottom: 20px; }
+    .layout { max-width: 720px; margin: 0 auto; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+    label { font-size: 0.85rem; color: #a8b8c8; }
+    input[type="text"] {
+      flex: 1; min-width: 200px;
+      background: #1a2332; border: 1px solid #2d3d52; color: #e8eef4;
+      padding: 10px 12px; border-radius: 6px;
+    }
+    button {
+      background: #2563eb; color: #fff; border: none; padding: 10px 14px;
+      border-radius: 6px; cursor: pointer; font-weight: 600;
+    }
+    button:hover { filter: brightness(1.08); }
+    button.secondary { background: #334155; }
+    button.danger { background: #b91c1c; }
+    #answer {
+      min-height: 2.5em; padding: 12px; border-radius: 8px; margin: 12px 0;
+      background: #1a2332; border: 1px solid #2d3d52;
+    }
+    #answer.correct { border-color: #22c55e; color: #86efac; }
+    #answer.wrong { border-color: #ef4444; color: #fca5a5; }
+    .meta { font-size: 0.9rem; color: #94a3b8; margin-bottom: 16px; }
+    #history { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; }
+    #history li { padding: 8px 0; border-bottom: 1px solid #243044; font-size: 0.9rem; }
+    #leaderboard { list-style: decimal; padding-left: 1.2rem; color: #cbd5e1; }
+    #leaderboard li { margin: 4px 0; }
+    #deduce-panel {
+      display: none; position: fixed; inset: 0; background: rgba(15,20,25,0.92);
+      z-index: 50; align-items: center; justify-content: center; padding: 16px;
+    }
+    #deduce-panel.open { display: flex; }
+    #deduce-card {
+      background: #1a2332; border: 1px solid #3b4f6b; border-radius: 12px;
+      padding: 24px; max-width: 480px; width: 100%;
+    }
+    #deduce-question { margin: 16px 0; font-size: 1.05rem; }
+    .deduce-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    section { margin-bottom: 24px; }
+    h2 { font-size: 1.1rem; margin: 0 0 10px; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <h1>Sports Guess</h1>
+    <p class="sub">I’m thinking of a player from the database. Ask yes/no questions, use Deduce mode, or type a name to guess.</p>
+
+    <div class="meta">Questions this round: <strong id="q-count">0</strong></div>
+
+    <div id="answer" aria-live="polite"></div>
+
+    <section>
+      <h2>Ask</h2>
+      <div class="row">
+        <input type="text" id="question-input" placeholder="e.g. Is the player retired? Do they play in the NBA?" autocomplete="off">
+        <button type="button" id="ask-btn">Ask</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Guess</h2>
+      <div class="row">
+        <input type="text" id="guess-input" placeholder="Player name…" autocomplete="off">
+        <button type="button" id="guess-btn">Submit guess</button>
+      </div>
+    </section>
+
+    <div class="row">
+      <button type="button" id="deduce-btn" class="secondary">Deduce (guided)</button>
+      <button type="button" id="deduce-py-btn" class="secondary">Deduce — Py order</button>
+      <button type="button" id="new-player-btn" class="secondary">New player</button>
+      <button type="button" id="give-up-btn" class="danger">Give up</button>
+    </div>
+
+    <section>
+      <h2>History</h2>
+      <ul id="history-list"></ul>
+    </section>
+
+    <section>
+      <h2>Leaderboard (fewest questions)</h2>
+      <ol id="leaderboard-list"></ol>
+    </section>
+  </div>
+
+  <div id="deduce-panel" role="dialog" aria-modal="true" aria-labelledby="deduce-question">
+    <div id="deduce-card">
+      <h2 style="margin-top:0">Deduction</h2>
+      <p id="deduce-question"></p>
+      <div class="deduce-btns">
+        <button type="button" id="deduce-yes">Yes</button>
+        <button type="button" id="deduce-no">No</button>
+        <button type="button" id="deduce-cancel" class="secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  const athletes = [
+    // NBA
+    { name: "LeBron James", league: "NBA", ring: true, retired: false, international: false },
+    { name: "Stephen Curry", league: "NBA", ring: true, retired: false, international: false },
+    { name: "Nikola Jokic", league: "NBA", ring: true, retired: false, international: true },
+    { name: "Michael Jordan", league: "NBA", ring: true, retired: true, international: false },
+    { name: "Victor Wembanyama", league: "NBA", ring: false, retired: false, international: true },
+    { name: "Luka Doncic", league: "NBA", ring: false, retired: false, international: true },
+    // NFL
+    { name: "Patrick Mahomes", league: "NFL", ring: true, retired: false, international: false },
+    { name: "Tom Brady", league: "NFL", ring: true, retired: true, international: false },
+    { name: "Lamar Jackson", league: "NFL", ring: false, retired: false, international: false },
+    { name: "Travis Kelce", league: "NFL", ring: true, retired: false, international: false },
+    { name: "Christian McCaffrey", league: "NFL", ring: false, retired: false, international: false },
+    { name: "Jerry Rice", league: "NFL", ring: true, retired: true, international: false },
+    // MLB
+    { name: "Shohei Ohtani", league: "MLB", ring: true, retired: false, international: true },
+    { name: "Aaron Judge", league: "MLB", ring: false, retired: false, international: false },
+    { name: "Mike Trout", league: "MLB", ring: false, retired: false, international: false },
+    { name: "Bryce Harper", league: "MLB", ring: false, retired: false, international: false },
+    { name: "Mookie Betts", league: "MLB", ring: true, retired: false, international: false },
+    { name: "Derek Jeter", league: "MLB", ring: true, retired: true, international: false },
+    // NHL
+    { name: "Connor McDavid", league: "NHL", ring: false, retired: false, international: true },
+    { name: "Sidney Crosby", league: "NHL", ring: true, retired: false, international: true },
+    { name: "Alex Ovechkin", league: "NHL", ring: true, retired: false, international: true },
+    { name: "Wayne Gretzky", league: "NHL", ring: true, retired: true, international: true },
+    { name: "Auston Matthews", league: "NHL", ring: false, retired: false, international: false },
+    { name: "Connor Bedard", league: "NHL", ring: false, retired: false, international: true }
+  ];
+
+  const pythonDB = athletes.slice();
+
+  const leagueToSport = {
+    NBA: "Basketball",
+    NFL: "Football",
+    MLB: "Baseball",
+    NHL: "Hockey"
+  };
+
+  const deduceQuestions = [
+    { trait: "league", text: "Is the sport played on ice? (NHL)", target: "NHL" },
+    { trait: "league", text: "Is the sport played with a hoop? (NBA)", target: "NBA" },
+    { trait: "league", text: "Is the sport played with a bat and ball? (MLB)", target: "MLB" },
+    { trait: "league", text: "Is the sport played on a 100-yard gridiron? (NFL)", target: "NFL" },
+    { trait: "retired", text: "Is the player retired?", target: true },
+    { trait: "ring", text: "Has this player won a championship (Ring/Cup)?", target: true },
+    { trait: "international", text: "Is the player from outside the United States?", target: true }
+  ];
+
+  const deduceQuestionsPy = [
+    { trait: "league", text: "Is the sport played on ice? (NHL)", target: "NHL" },
+    { trait: "league", text: "Is the sport played with a hoop? (NBA)", target: "NBA" },
+    { trait: "league", text: "Is the sport played with a bat and ball? (MLB)", target: "MLB" },
+    { trait: "league", text: "Is the sport played on a 100-yard gridiron? (NFL)", target: "NFL" },
+    { trait: "retired", text: "Is the player retired?", target: true },
+    { trait: "ring", text: "Has this player won a championship (Ring/Cup)?", target: true },
+    { trait: "international", text: "Is the player from outside the United States?", target: true }
+  ];
+
+  const answerEl = document.getElementById("answer");
+  const questionInput = document.getElementById("question-input");
+  const guessInput = document.getElementById("guess-input");
+  const askBtn = document.getElementById("ask-btn");
+  const guessBtn = document.getElementById("guess-btn");
+  const newPlayerBtn = document.getElementById("new-player-btn");
+  const giveUpBtn = document.getElementById("give-up-btn");
+  const qCountEl = document.getElementById("q-count");
+  const historyList = document.getElementById("history-list");
+  const leaderboardList = document.getElementById("leaderboard-list");
+  const deducePanel = document.getElementById("deduce-panel");
+  const deduceQuestionEl = document.getElementById("deduce-question");
+  const deduceBtn = document.getElementById("deduce-btn");
+  const deducePyBtn = document.getElementById("deduce-py-btn");
+  const deduceYes = document.getElementById("deduce-yes");
+  const deduceNo = document.getElementById("deduce-no");
+  const deduceCancel = document.getElementById("deduce-cancel");
+
+  let current = null;
+  let questionsCount = 0;
+  let history = [];
+  let deduceIndex = 0;
+  let deducePossible = [];
+  let deduceQuestionSet = deduceQuestions;
+
+  function normalize(s) {
+    return String(s || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function startRound() {
+    current = athletes[Math.floor(Math.random() * athletes.length)];
+    questionsCount = 0;
+    qCountEl.textContent = "0";
+    history = [];
+    renderHistory();
+    answerEl.textContent = "";
+    answerEl.className = "";
+    guessInput.value = "";
+    questionInput.value = "";
+  }
+
+  /** Simple keyword-based yes/no answers for the secret player. */
+  function answerQuestion(qRaw, player) {
+    const q = normalize(qRaw);
+    if (!q) return { text: "Ask something specific.", neutral: true };
+
+    if (/\b(nhl|hockey|ice)\b/.test(q)) {
+      const yes = player.league === "NHL";
+      return { text: yes ? "Yes — NHL / hockey." : "No — not NHL.", yes };
+    }
+    if (/\b(nba|basketball|hoop)\b/.test(q)) {
+      const yes = player.league === "NBA";
+      return { text: yes ? "Yes — NBA / basketball." : "No — not NBA.", yes };
+    }
+    if (/\b(mlb|baseball|bat)\b/.test(q)) {
+      const yes = player.league === "MLB";
+      return { text: yes ? "Yes — MLB / baseball." : "No — not MLB.", yes };
+    }
+    if (/\b(nfl|football|gridiron)\b/.test(q)) {
+      const yes = player.league === "NFL";
+      return { text: yes ? "Yes — NFL." : "No — not NFL.", yes };
+    }
+    if (/\bretired\b/.test(q)) {
+      const yes = player.retired;
+      return { text: yes ? "Yes, retired." : "No, still active (in our dataset).", yes };
+    }
+    if (/\b(ring|championship|title|super bowl|world series|stanley)\b/.test(q)) {
+      const yes = player.ring;
+      return { text: yes ? "Yes — has won a major title in this dataset." : "No — not marked with a ring/title here.", yes };
+    }
+    if (/\b(international|outside the us|non.?american|foreign)\b/.test(q)) {
+      const yes = player.international;
+      return { text: yes ? "Yes — international (non-US) in this dataset." : "No — US in this dataset.", yes };
+    }
+    if (/\b(lebron|curry|jokic|jordan|wembanyama|doncic)\b/.test(q) && player.league === "NBA") {
+      const last = player.name.split(" ").pop().toLowerCase();
+      if (q.includes(last)) return { text: "Don’t ask the name directly — guess or use Deduce.", neutral: true };
+    }
+    return {
+      text: "Try asking about league (NBA/NFL/MLB/NHL), retired, championship, or international — or use Deduce.",
+      neutral: true
+    };
+  }
+
+  function askQuestion() {
+    if (!current) return;
+    const raw = questionInput.value;
+    if (!normalize(raw)) return;
+    questionsCount += 1;
+    qCountEl.textContent = String(questionsCount);
+    const result = answerQuestion(raw, current);
+    answerEl.textContent = result.text;
+    answerEl.className = result.neutral ? "" : result.yes ? "correct" : "wrong";
+    history.unshift({ q: raw, a: result.text });
+    renderHistory();
+    questionInput.value = "";
+  }
+
+  function startDeduction(dataset, questionSet) {
+    deducePossible = (dataset ? dataset.slice() : athletes.slice());
+    deduceIndex = 0;
+    deduceQuestionSet = questionSet || deduceQuestions;
+    deducePanel.classList.add("open");
+    renderDeduceQuestion();
+  }
+
+  function renderDeduceQuestion() {
+    if (deducePossible.length <= 1 || deduceIndex >= deduceQuestionSet.length) {
+      finishDeduction();
+      return;
+    }
+    const q = deduceQuestionSet[deduceIndex];
+    deduceQuestionEl.textContent = q.text + " — (" + deducePossible.length + " possible)";
+  }
+
+  function applyDeduceAnswer(yes) {
+    const q = deduceQuestionSet[deduceIndex];
+    if (!q) return;
+    if (q.trait === "sport") {
+      const sportName = leagueToSport[q.target] || q.target;
+      if (yes) {
+        deducePossible = deducePossible.filter(function (a) {
+          return a.sport === sportName || a.league === q.target;
+        });
+      } else {
+        deducePossible = deducePossible.filter(function (a) {
+          return !(a.sport === sportName || a.league === q.target);
+        });
+      }
+    } else if (q.trait === "league") {
+      if (yes) deducePossible = deducePossible.filter(function (a) { return a.league === q.target; });
+      else deducePossible = deducePossible.filter(function (a) { return a.league !== q.target; });
+    } else {
+      if (yes) deducePossible = deducePossible.filter(function (a) { return !!a[q.trait] === !!q.target; });
+      else deducePossible = deducePossible.filter(function (a) { return !!a[q.trait] !== !!q.target; });
+    }
+    deduceIndex += 1;
+    renderDeduceQuestion();
+  }
+
+  function finishDeduction() {
+    deducePanel.classList.remove("open");
+    if (deducePossible.length === 1) {
+      const p = deducePossible[0];
+      answerEl.textContent = "Deduction: I think it's " + p.name + ".";
+      answerEl.className = "correct";
+      history.unshift({ q: "Deduce", a: "Guessed: " + p.name });
+      renderHistory();
+      const lb = loadLeaderboard();
+      lb.push({ name: p.name, count: questionsCount, date: new Date().toISOString() });
+      saveLeaderboard(lb);
+      updateLeaderboardDisplay();
+      setTimeout(function () {
+        startRound();
+        answerEl.className = "";
+      }, 1200);
+    } else if (deducePossible.length > 1) {
+      answerEl.textContent = "Deduction narrowed to " + deducePossible.length + " players. See history for details.";
+      answerEl.className = "";
+      history.unshift({
+        q: "Deduce",
+        a: "Candidates: " + deducePossible.map(function (x) { return x.name; }).join(", ")
+      });
+      renderHistory();
+    } else {
+      answerEl.textContent = "Deduction failed to find a match.";
+      answerEl.className = "wrong";
+    }
+  }
+
+  deduceBtn.addEventListener("click", function () { startDeduction(); });
+  deduceYes.addEventListener("click", function () {
+    questionsCount += 1;
+    qCountEl.textContent = String(questionsCount);
+    applyDeduceAnswer(true);
+  });
+  deduceNo.addEventListener("click", function () {
+    questionsCount += 1;
+    qCountEl.textContent = String(questionsCount);
+    applyDeduceAnswer(false);
+  });
+  deduceCancel.addEventListener("click", function () { deducePanel.classList.remove("open"); });
+  deducePyBtn.addEventListener("click", function () { startDeduction(pythonDB, deduceQuestionsPy); });
+
+  function renderHistory() {
+    historyList.innerHTML = "";
+    for (let i = 0; i < history.length; i++) {
+      const item = history[i];
+      const li = document.createElement("li");
+      li.textContent = item.q + " → " + item.a;
+      historyList.appendChild(li);
+    }
+  }
+
+  function loadLeaderboard() {
+    try {
+      const raw = localStorage.getItem("sg_leaderboard") || "[]";
+      return JSON.parse(raw);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveLeaderboard(lb) {
+    localStorage.setItem("sg_leaderboard", JSON.stringify(lb));
+  }
+
+  function updateLeaderboardDisplay() {
+    const lb = loadLeaderboard();
+    lb.sort(function (a, b) { return a.count - b.count; });
+    leaderboardList.innerHTML = "";
+    for (let i = 0; i < Math.min(10, lb.length); i++) {
+      const entry = lb[i];
+      const li = document.createElement("li");
+      li.textContent = entry.name + " — " + entry.count + " question(s) (" + new Date(entry.date).toLocaleDateString() + ")";
+      leaderboardList.appendChild(li);
+    }
+  }
+
+  function submitGuess() {
+    if (!current) return;
+    const g = normalize(guessInput.value);
+    if (!g) return;
+    const target = normalize(current.name);
+    if (g === target || target.includes(g) || g.includes(target)) {
+      answerEl.textContent = "Correct! It was " + current.name + ".";
+      answerEl.className = "correct";
+      const lb = loadLeaderboard();
+      lb.push({ name: current.name, count: questionsCount, date: new Date().toISOString() });
+      saveLeaderboard(lb);
+      updateLeaderboardDisplay();
+      setTimeout(function () {
+        startRound();
+        answerEl.className = "";
+      }, 1200);
+    } else {
+      answerEl.textContent = "No — " + guessInput.value + " is not correct.";
+      answerEl.className = "wrong";
+    }
+    guessInput.value = "";
+  }
+
+  askBtn.addEventListener("click", askQuestion);
+  questionInput.addEventListener("keydown", function (e) { if (e.key === "Enter") askQuestion(); });
+  guessBtn.addEventListener("click", submitGuess);
+  guessInput.addEventListener("keydown", function (e) { if (e.key === "Enter") submitGuess(); });
+  newPlayerBtn.addEventListener("click", function () { startRound(); });
+  giveUpBtn.addEventListener("click", function () {
+    if (!current) return;
+    answerEl.textContent = "The player was " + current.name + ".";
+    answerEl.className = "wrong";
+    history.unshift({ q: "Gave up", a: "Revealed: " + current.name });
+    renderHistory();
+    setTimeout(function () {
+      startRound();
+      answerEl.className = "";
+    }, 1200);
+  });
+
+  startRound();
+  updateLeaderboardDisplay();
+})();
+</script>
+</body>
+</html>
