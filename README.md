@@ -11,6 +11,26 @@ The computer picks an athlete from the four major North American sports (NBA, NF
 
 - `index.html` — main guessing game (single HTML file, no build step).
 - `existential-snake.html` — separate mini-game (Existential Snake: The Slab).
+- `publish.sh` — one-command script to commit and push to this repo.
+- `quick-publish.sh` — no-argument publish script with timestamp message.
+
+## Publish updates reliably
+
+From the project folder, run:
+
+`./publish.sh "Your commit message"`
+
+Or use the fastest option (auto commit message):
+
+`./quick-publish.sh`
+
+What it does each time:
+
+- verifies you are in this repo and on `main`
+- verifies `origin` is `jhayward27-ui/jamesguessthatplayer`
+- stages all changes
+- creates a commit
+- pushes to `origin/main`
 
 ## License
 
