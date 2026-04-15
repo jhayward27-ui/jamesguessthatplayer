@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sports Guess — 20 Questions</title>
+  <title>Guess The Athlete Game</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -54,11 +54,29 @@
     .deduce-btns { display: flex; gap: 10px; flex-wrap: wrap; }
     section { margin-bottom: 24px; }
     h2 { font-size: 1.1rem; margin: 0 0 10px; color: #94a3b8; }
+    #home-screen {
+      max-width: 720px; margin: 0 auto; min-height: calc(100vh - 48px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .home-card {
+      width: 100%; text-align: center; padding: 28px;
+      background: #1a2332; border: 1px solid #2d3d52; border-radius: 12px;
+    }
+    .home-card p { color: #a8b8c8; margin: 12px 0 18px; }
+    #game-app { display: none; }
   </style>
 </head>
 <body>
-  <div class="layout">
-    <h1>Sports Guess</h1>
+  <div id="home-screen">
+    <div class="home-card">
+      <h1>Guess The Athlete Game</h1>
+      <p>Ask yes/no questions and guess the player in as few questions as possible.</p>
+      <button type="button" id="enter-game-btn">Start Game</button>
+    </div>
+  </div>
+
+  <div class="layout" id="game-app">
+    <h1>Guess The Athlete Game</h1>
     <p class="sub">I’m thinking of a player from the database. Ask yes/no questions, use Deduce mode, or type a name to guess.</p>
 
     <div class="meta">Questions this round: <strong id="q-count">0</strong></div>
@@ -115,33 +133,33 @@
 (function () {
   const athletes = [
     // NBA
-    { name: "LeBron James", league: "NBA", ring: true, retired: false, international: false },
-    { name: "Stephen Curry", league: "NBA", ring: true, retired: false, international: false },
-    { name: "Nikola Jokic", league: "NBA", ring: true, retired: false, international: true },
-    { name: "Michael Jordan", league: "NBA", ring: true, retired: true, international: false },
-    { name: "Victor Wembanyama", league: "NBA", ring: false, retired: false, international: true },
-    { name: "Luka Doncic", league: "NBA", ring: false, retired: false, international: true },
+    { name: "LeBron James", league: "NBA", conference: "West", division: "Pacific", team: "Los Angeles Lakers", number: 23, position: "Forward", ring: true, retired: false, international: false, hallOfFame: false, pastTeams: ["Cleveland Cavaliers", "Miami Heat"] },
+    { name: "Stephen Curry", league: "NBA", conference: "West", division: "Pacific", team: "Golden State Warriors", number: 30, position: "Guard", ring: true, retired: false, international: false, hallOfFame: false, pastTeams: [] },
+    { name: "Nikola Jokic", league: "NBA", conference: "West", division: "Northwest", team: "Denver Nuggets", number: 15, position: "Center", ring: true, retired: false, international: true, hallOfFame: false, pastTeams: [] },
+    { name: "Michael Jordan", league: "NBA", conference: "East", division: "Central", team: "Chicago Bulls", number: 23, position: "Guard", ring: true, retired: true, international: false, hallOfFame: true, pastTeams: ["Washington Wizards"] },
+    { name: "Victor Wembanyama", league: "NBA", conference: "West", division: "Southwest", team: "San Antonio Spurs", number: 1, position: "Center", ring: false, retired: false, international: true, hallOfFame: false, pastTeams: [] },
+    { name: "Luka Doncic", league: "NBA", conference: "West", division: "Pacific", team: "Los Angeles Lakers", number: 77, position: "Guard", ring: false, retired: false, international: true, hallOfFame: false, pastTeams: ["Dallas Mavericks"] },
     // NFL
-    { name: "Patrick Mahomes", league: "NFL", ring: true, retired: false, international: false },
-    { name: "Tom Brady", league: "NFL", ring: true, retired: true, international: false },
-    { name: "Lamar Jackson", league: "NFL", ring: false, retired: false, international: false },
-    { name: "Travis Kelce", league: "NFL", ring: true, retired: false, international: false },
-    { name: "Christian McCaffrey", league: "NFL", ring: false, retired: false, international: false },
-    { name: "Jerry Rice", league: "NFL", ring: true, retired: true, international: false },
+    { name: "Patrick Mahomes", league: "NFL", conference: "AFC", division: "West", team: "Kansas City Chiefs", number: 15, position: "Quarterback", ring: true, retired: false, international: false, hallOfFame: false, pastTeams: [] },
+    { name: "Tom Brady", league: "NFL", conference: "AFC", division: "East", team: "New England Patriots", number: 12, position: "Quarterback", ring: true, retired: true, international: false, hallOfFame: false, pastTeams: ["Tampa Bay Buccaneers"] },
+    { name: "Lamar Jackson", league: "NFL", conference: "AFC", division: "North", team: "Baltimore Ravens", number: 8, position: "Quarterback", ring: false, retired: false, international: false, hallOfFame: false, pastTeams: [] },
+    { name: "Travis Kelce", league: "NFL", conference: "AFC", division: "West", team: "Kansas City Chiefs", number: 87, position: "Tight End", ring: true, retired: false, international: false, hallOfFame: false, pastTeams: [] },
+    { name: "Christian McCaffrey", league: "NFL", conference: "NFC", division: "West", team: "San Francisco 49ers", number: 23, position: "Running Back", ring: false, retired: false, international: false, hallOfFame: false, pastTeams: ["Carolina Panthers"] },
+    { name: "Jerry Rice", league: "NFL", conference: "NFC", division: "West", team: "San Francisco 49ers", number: 80, position: "Wide Receiver", ring: true, retired: true, international: false, hallOfFame: true, pastTeams: ["Oakland Raiders", "Seattle Seahawks"] },
     // MLB
-    { name: "Shohei Ohtani", league: "MLB", ring: true, retired: false, international: true },
-    { name: "Aaron Judge", league: "MLB", ring: false, retired: false, international: false },
-    { name: "Mike Trout", league: "MLB", ring: false, retired: false, international: false },
-    { name: "Bryce Harper", league: "MLB", ring: false, retired: false, international: false },
-    { name: "Mookie Betts", league: "MLB", ring: true, retired: false, international: false },
-    { name: "Derek Jeter", league: "MLB", ring: true, retired: true, international: false },
+    { name: "Shohei Ohtani", league: "MLB", conference: "NL", division: "West", team: "Los Angeles Dodgers", number: 17, position: "Pitcher / DH", ring: true, retired: false, international: true, hallOfFame: false, pastTeams: ["Los Angeles Angels"] },
+    { name: "Aaron Judge", league: "MLB", conference: "AL", division: "East", team: "New York Yankees", number: 99, position: "Outfielder", ring: false, retired: false, international: false, hallOfFame: false, pastTeams: [] },
+    { name: "Mike Trout", league: "MLB", conference: "AL", division: "West", team: "Los Angeles Angels", number: 27, position: "Outfielder", ring: false, retired: false, international: false, hallOfFame: false, pastTeams: [] },
+    { name: "Bryce Harper", league: "MLB", conference: "NL", division: "East", team: "Philadelphia Phillies", number: 3, position: "First Baseman", ring: false, retired: false, international: false, hallOfFame: false, pastTeams: ["Washington Nationals"] },
+    { name: "Mookie Betts", league: "MLB", conference: "NL", division: "West", team: "Los Angeles Dodgers", number: 50, position: "Infielder / Outfielder", ring: true, retired: false, international: false, hallOfFame: false, pastTeams: ["Boston Red Sox"] },
+    { name: "Derek Jeter", league: "MLB", conference: "AL", division: "East", team: "New York Yankees", number: 2, position: "Shortstop", ring: true, retired: true, international: false, hallOfFame: true, pastTeams: [] },
     // NHL
-    { name: "Connor McDavid", league: "NHL", ring: false, retired: false, international: true },
-    { name: "Sidney Crosby", league: "NHL", ring: true, retired: false, international: true },
-    { name: "Alex Ovechkin", league: "NHL", ring: true, retired: false, international: true },
-    { name: "Wayne Gretzky", league: "NHL", ring: true, retired: true, international: true },
-    { name: "Auston Matthews", league: "NHL", ring: false, retired: false, international: false },
-    { name: "Connor Bedard", league: "NHL", ring: false, retired: false, international: true }
+    { name: "Connor McDavid", league: "NHL", conference: "West", division: "Pacific", team: "Edmonton Oilers", number: 97, position: "Center", ring: false, retired: false, international: true, hallOfFame: false, pastTeams: [] },
+    { name: "Sidney Crosby", league: "NHL", conference: "East", division: "Metropolitan", team: "Pittsburgh Penguins", number: 87, position: "Center", ring: true, retired: false, international: true, hallOfFame: false, pastTeams: [] },
+    { name: "Alex Ovechkin", league: "NHL", conference: "East", division: "Metropolitan", team: "Washington Capitals", number: 8, position: "Left Wing", ring: true, retired: false, international: true, hallOfFame: false, pastTeams: [] },
+    { name: "Wayne Gretzky", league: "NHL", conference: "West", division: "Pacific", team: "Edmonton Oilers", number: 99, position: "Center", ring: true, retired: true, international: true, hallOfFame: true, pastTeams: ["Los Angeles Kings", "St. Louis Blues", "New York Rangers"] },
+    { name: "Auston Matthews", league: "NHL", conference: "East", division: "Atlantic", team: "Toronto Maple Leafs", number: 34, position: "Center", ring: false, retired: false, international: false, hallOfFame: false, pastTeams: [] },
+    { name: "Connor Bedard", league: "NHL", conference: "West", division: "Central", team: "Chicago Blackhawks", number: 98, position: "Center", ring: false, retired: false, international: true, hallOfFame: false, pastTeams: [] }
   ];
 
   const pythonDB = athletes.slice();
@@ -151,6 +169,32 @@
     NFL: "Football",
     MLB: "Baseball",
     NHL: "Hockey"
+  };
+  const playerDecades = {
+    "LeBron James": ["2000s", "2010s", "2020s"],
+    "Stephen Curry": ["2000s", "2010s", "2020s"],
+    "Nikola Jokic": ["2010s", "2020s"],
+    "Michael Jordan": ["1980s", "1990s", "2000s"],
+    "Victor Wembanyama": ["2020s"],
+    "Luka Doncic": ["2010s", "2020s"],
+    "Patrick Mahomes": ["2010s", "2020s"],
+    "Tom Brady": ["2000s", "2010s", "2020s"],
+    "Lamar Jackson": ["2010s", "2020s"],
+    "Travis Kelce": ["2010s", "2020s"],
+    "Christian McCaffrey": ["2010s", "2020s"],
+    "Jerry Rice": ["1980s", "1990s", "2000s"],
+    "Shohei Ohtani": ["2010s", "2020s"],
+    "Aaron Judge": ["2010s", "2020s"],
+    "Mike Trout": ["2010s", "2020s"],
+    "Bryce Harper": ["2010s", "2020s"],
+    "Mookie Betts": ["2010s", "2020s"],
+    "Derek Jeter": ["1990s", "2000s", "2010s"],
+    "Connor McDavid": ["2010s", "2020s"],
+    "Sidney Crosby": ["2000s", "2010s", "2020s"],
+    "Alex Ovechkin": ["2000s", "2010s", "2020s"],
+    "Wayne Gretzky": ["1970s", "1980s", "1990s"],
+    "Auston Matthews": ["2010s", "2020s"],
+    "Connor Bedard": ["2020s"]
   };
 
   const deduceQuestions = [
@@ -190,6 +234,9 @@
   const deduceYes = document.getElementById("deduce-yes");
   const deduceNo = document.getElementById("deduce-no");
   const deduceCancel = document.getElementById("deduce-cancel");
+  const homeScreen = document.getElementById("home-screen");
+  const gameApp = document.getElementById("game-app");
+  const enterGameBtn = document.getElementById("enter-game-btn");
 
   let current = null;
   let questionsCount = 0;
@@ -218,47 +265,118 @@
     questionInput.value = "";
   }
 
-  /** Simple keyword-based yes/no answers for the secret player. */
+  /** Broader question handling that always returns a direct response. */
   function answerQuestion(qRaw, player) {
     const q = normalize(qRaw);
-    if (!q) return { text: "Ask something specific.", neutral: true };
+    if (!q) return { text: "No", yes: false };
 
-    if (/\b(nhl|hockey|ice)\b/.test(q)) {
-      const yes = player.league === "NHL";
-      return { text: yes ? "Yes — NHL / hockey." : "No — not NHL.", yes };
+    function yesNo(condition) {
+      return { text: condition ? "Yes" : "No", yes: condition };
     }
-    if (/\b(nba|basketball|hoop)\b/.test(q)) {
-      const yes = player.league === "NBA";
-      return { text: yes ? "Yes — NBA / basketball." : "No — not NBA.", yes };
+    function listContains(list, text) {
+      return list.some(function (item) { return text.includes(normalize(item)); });
     }
-    if (/\b(mlb|baseball|bat)\b/.test(q)) {
-      const yes = player.league === "MLB";
-      return { text: yes ? "Yes — MLB / baseball." : "No — not MLB.", yes };
+    function extractNumber(text) {
+      const match = text.match(/\b\d{1,3}\b/);
+      return match ? Number(match[0]) : null;
     }
-    if (/\b(nfl|football|gridiron)\b/.test(q)) {
-      const yes = player.league === "NFL";
-      return { text: yes ? "Yes — NFL." : "No — not NFL.", yes };
+    function extractDecade(text) {
+      if (/\b70s\b|\b1970s\b/.test(text)) return "1970s";
+      if (/\b80s\b|\b1980s\b/.test(text)) return "1980s";
+      if (/\b90s\b|\b1990s\b/.test(text)) return "1990s";
+      if (/\b200s\b|\b00s\b|\b2000s\b/.test(text)) return "2000s";
+      if (/\b2010s\b|\b10s\b/.test(text)) return "2010s";
+      if (/\b2020s\b|\b20s\b/.test(text)) return "2020s";
+      return null;
     }
-    if (/\bretired\b/.test(q)) {
-      const yes = player.retired;
-      return { text: yes ? "Yes, retired." : "No, still active (in our dataset).", yes };
+    function getPrimaryLocation(teamName) {
+      const team = normalize(teamName);
+      if (team.startsWith("los angeles")) return "los angeles";
+      if (team.startsWith("new york")) return "new york";
+      if (team.startsWith("san francisco")) return "san francisco";
+      if (team.startsWith("st louis")) return "st louis";
+      if (team.startsWith("tampa bay")) return "tampa bay";
+      return team.split(" ")[0];
     }
+
+    if (/\b(nhl|hockey|ice)\b/.test(q)) return yesNo(player.league === "NHL");
+    if (/\b(nba|basketball|hoop)\b/.test(q)) return yesNo(player.league === "NBA");
+    if (/\b(mlb|baseball|bat)\b/.test(q)) return yesNo(player.league === "MLB");
+    if (/\b(nfl|football|gridiron)\b/.test(q)) return yesNo(player.league === "NFL");
+    if (/\bretired\b/.test(q)) return yesNo(player.retired);
+    if (/\b(active|still playing|currently playing)\b/.test(q)) return yesNo(!player.retired);
     if (/\b(ring|championship|title|super bowl|world series|stanley)\b/.test(q)) {
-      const yes = player.ring;
-      return { text: yes ? "Yes — has won a major title in this dataset." : "No — not marked with a ring/title here.", yes };
+      return yesNo(player.ring);
     }
     if (/\b(international|outside the us|non.?american|foreign)\b/.test(q)) {
-      const yes = player.international;
-      return { text: yes ? "Yes — international (non-US) in this dataset." : "No — US in this dataset.", yes };
+      return yesNo(player.international);
     }
-    if (/\b(lebron|curry|jokic|jordan|wembanyama|doncic)\b/.test(q) && player.league === "NBA") {
-      const last = player.name.split(" ").pop().toLowerCase();
-      if (q.includes(last)) return { text: "Don’t ask the name directly — guess or use Deduce.", neutral: true };
+    if (/\b(american|from the us|usa|united states)\b/.test(q)) {
+      return yesNo(!player.international);
     }
-    return {
-      text: "Try asking about league (NBA/NFL/MLB/NHL), retired, championship, or international — or use Deduce.",
-      neutral: true
-    };
+    if (/\b(conference|afc|nfc|east|west|al|nl)\b/.test(q)) {
+      const targetConf = normalize(player.conference);
+      const targetDiv = normalize(player.division);
+      const confMatch = q.includes(targetConf) || q.includes(targetDiv);
+      return yesNo(confMatch);
+    }
+    if (/\bdivision\b|\b(atlantic|central|metropolitan|pacific|northwest|southwest|southeast|north|south)\b/.test(q)) {
+      const targetDiv = normalize(player.division);
+      return yesNo(q.includes(targetDiv));
+    }
+    if (/\b(number|jersey|wear|#)\b/.test(q)) {
+      const n = extractNumber(q);
+      return yesNo(n !== null && n === player.number);
+    }
+    if (/\b(position|guard|center|forward|quarterback|running back|wide receiver|tight end|pitcher|dh|outfielder|shortstop|first baseman|wing)\b/.test(q)) {
+      return yesNo(q.includes(normalize(player.position)));
+    }
+    if (/\b(offense|offensive|defense|defensive)\b/.test(q)) {
+      const offensivePositions = [
+        "guard", "center", "forward", "quarterback", "running back", "wide receiver", "tight end",
+        "pitcher", "dh", "outfielder", "shortstop", "first baseman", "left wing", "infielder"
+      ];
+      const pos = normalize(player.position);
+      const isOffense = offensivePositions.some(function (p) { return pos.includes(p); });
+      if (/\b(defense|defensive)\b/.test(q)) return yesNo(!isOffense ? true : false);
+      return yesNo(isOffense);
+    }
+    if (/\b(team|plays for|on the|current team|franchise)\b/.test(q)) {
+      return yesNo(q.includes(normalize(player.team)));
+    }
+    if (/\b(where.*play|where does|where do|city|location)\b/.test(q)) {
+      const teamNorm = normalize(player.team);
+      const location = getPrimaryLocation(player.team);
+      return yesNo(q.includes(teamNorm) || q.includes(location));
+    }
+    if (/\b(decade|era|played in|play in)\b|\b70s\b|\b80s\b|\b90s\b|\b200s\b|\b2000s\b|\b2010s\b|\b2020s\b/.test(q)) {
+      const targetDecade = extractDecade(q);
+      const decades = playerDecades[player.name] || [];
+      if (!targetDecade) return yesNo(false);
+      return yesNo(decades.includes(targetDecade));
+    }
+    if (/\b(past team|former team|used to play|played for|ex team|previous team)\b/.test(q)) {
+      if (!player.pastTeams || player.pastTeams.length === 0) return yesNo(false);
+      const matchedPastTeam = listContains(player.pastTeams, q);
+      return yesNo(matchedPastTeam);
+    }
+    if (/\b(hall of fame|hof)\b/.test(q)) {
+      return yesNo(!!player.hallOfFame);
+    }
+
+    // Name-based questions are answered directly instead of redirecting.
+    const fullName = normalize(player.name);
+    const nameParts = fullName.split(" ").filter(Boolean);
+    const allNames = athletes.map(function (a) { return normalize(a.name); });
+    const mentionedAnyKnownName = allNames.some(function (n) { return q.includes(n); });
+    if (q.includes(fullName) || nameParts.some(function (part) { return part.length > 2 && q.includes(part); })) {
+      return yesNo(true);
+    }
+    if (mentionedAnyKnownName) {
+      return yesNo(false);
+    }
+
+    return yesNo(false);
   }
 
   function askQuestion() {
@@ -436,8 +554,14 @@
     }, 1200);
   });
 
-  startRound();
-  updateLeaderboardDisplay();
+  function startApp() {
+    homeScreen.style.display = "none";
+    gameApp.style.display = "block";
+    startRound();
+    updateLeaderboardDisplay();
+  }
+
+  enterGameBtn.addEventListener("click", startApp);
 })();
 </script>
 </body>
