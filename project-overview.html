@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guess The Athlete Game - Project Overview</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a31;
+      --panel-2: #1a2442;
+      --text: #e9edf8;
+      --muted: #aeb9d4;
+      --accent: #4f8cff;
+      --ok: #22c55e;
+      --line: #2a3558;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(circle at top, #131d3a 0%, var(--bg) 55%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap { max-width: 1024px; margin: 0 auto; padding: 28px 18px 64px; }
+    .hero {
+      border: 1px solid var(--line);
+      background: linear-gradient(145deg, #16224a, #101933);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 18px;
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
+    }
+    h1 { margin: 0 0 8px; font-size: clamp(1.6rem, 2.7vw, 2.5rem); }
+    .lead { margin: 0; color: var(--muted); max-width: 75ch; }
+    .actions { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .btn {
+      display: inline-block; text-decoration: none; color: #fff; font-weight: 600;
+      background: var(--accent); border: 1px solid #6ca0ff; border-radius: 10px;
+      padding: 10px 14px;
+    }
+    .btn.secondary {
+      background: transparent; border-color: var(--line); color: var(--text);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin: 14px 0 20px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .card h3 { margin: 0 0 8px; font-size: 1rem; }
+    .card p, .card li { color: var(--muted); margin: 0; font-size: 0.95rem; }
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .section h2 { margin: 0 0 8px; font-size: 1.2rem; }
+    ul { margin: 8px 0 0 18px; padding: 0; }
+    .shots {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .shot {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--panel-2);
+    }
+    .shot img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      display: block;
+      background: #0f1529;
+    }
+    .shot .cap {
+      border-top: 1px solid var(--line);
+      padding: 8px 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .small { color: var(--muted); font-size: 0.9rem; }
+    code {
+      background: #0f1529;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 2px 6px;
+      color: #dbe6ff;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <h1>Guess The Athlete Game</h1>
+      <p class="lead">
+        A browser game where the computer picks an athlete from NBA, NFL, MLB, or NHL and the player asks yes/no questions to identify them in under 25 questions.
+      </p>
+      <div class="actions">
+        <a class="btn" href="./index.html">Play Game</a>
+        <a class="btn secondary" href="https://github.com/jhayward27-ui/jamesguessthatplayer">View Repository</a>
+      </div>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <h3>Core Gameplay</h3>
+        <p>Ask yes/no questions, narrow the hidden player, then submit a final guess.</p>
+      </article>
+      <article class="card">
+        <h3>Multi-Sport Dataset</h3>
+        <p>Covers major North American leagues with current and retired player entries.</p>
+      </article>
+      <article class="card">
+        <h3>Guided Deduce Mode</h3>
+        <p>A fast elimination flow that reduces candidates based on your answers.</p>
+      </article>
+      <article class="card">
+        <h3>No Build Step</h3>
+        <p>Single-file app in <code>index.html</code> using plain HTML/CSS/JS.</p>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>Project Snapshot</h2>
+      <ul>
+        <li>Hidden player from NBA/NFL/MLB/NHL each round</li>
+        <li>Strict yes/no response style for in-game questions</li>
+        <li>Question count + leaderboard to encourage efficient guessing</li>
+        <li>Extra mini-game included: <code>existential-snake.html</code></li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Key Screens</h2>
+      <p class="small">Add screenshots in the <code>screenshots/</code> folder with these filenames.</p>
+      <div class="shots">
+        <figure class="shot">
+          <img src="./screenshots/01-home-page.png" alt="Home page screenshot">
+          <figcaption class="cap">Home screen</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./screenshots/02-main-gameplay.png" alt="Main gameplay screenshot">
+          <figcaption class="cap">Main gameplay</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./screenshots/03-deduce-panel.png" alt="Deduce mode screenshot">
+          <figcaption class="cap">Deduce mode panel</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./screenshots/04-correct-guess.png" alt="Correct guess screenshot">
+          <figcaption class="cap">Correct guess result</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./screenshots/05-leaderboard.png" alt="Leaderboard screenshot">
+          <figcaption class="cap">Leaderboard view</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Run + Publish</h2>
+      <ul>
+        <li>Run locally: open <code>index.html</code> in a browser</li>
+        <li>Quick publish: <code>./quick-publish.sh</code></li>
+        <li>Custom commit publish: <code>./publish.sh "your message"</code></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
