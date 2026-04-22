@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#13203f"/>
+      <stop offset="100%" stop-color="#0b1223"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <rect x="140" y="90" width="1000" height="540" rx="16" fill="#17274c" stroke="#2b4279"/>
+  <text x="640" y="210" fill="#e8eefc" font-family="Arial, sans-serif" font-size="52" text-anchor="middle">Guess The Athlete Game</text>
+  <text x="640" y="270" fill="#aab8d8" font-family="Arial, sans-serif" font-size="26" text-anchor="middle">Home Screen Screenshot Placeholder</text>
+  <rect x="510" y="340" width="260" height="64" rx="10" fill="#4f8cff"/>
+  <text x="640" y="382" fill="#ffffff" font-family="Arial, sans-serif" font-size="30" text-anchor="middle">Start Game</text>
+</svg>

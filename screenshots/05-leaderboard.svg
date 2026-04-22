@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0c1326"/>
+  <rect x="280" y="90" width="720" height="540" rx="16" fill="#17213f" stroke="#2b3f73"/>
+  <text x="640" y="150" fill="#e8eefc" font-family="Arial, sans-serif" font-size="42" text-anchor="middle">Leaderboard</text>
+  <text x="640" y="195" fill="#9eb1dc" font-family="Arial, sans-serif" font-size="22" text-anchor="middle">Fewest Questions</text>
+  <g fill="#dce7ff" font-family="Arial, sans-serif" font-size="26">
+    <text x="360" y="260">1. Nikola Jokic - 6</text>
+    <text x="360" y="310">2. Shohei Ohtani - 7</text>
+    <text x="360" y="360">3. Connor McDavid - 8</text>
+    <text x="360" y="410">4. Jayson Tatum - 9</text>
+    <text x="360" y="460">5. Patrick Mahomes - 10</text>
+  </g>
+  <text x="640" y="540" fill="#8ea4d4" font-family="Arial, sans-serif" font-size="20" text-anchor="middle">Leaderboard Screenshot Placeholder</text>
+</svg>

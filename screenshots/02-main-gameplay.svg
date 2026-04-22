@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0d1428"/>
+  <rect x="60" y="50" width="780" height="620" rx="14" fill="#17213f" stroke="#2d3d6c"/>
+  <rect x="880" y="50" width="340" height="300" rx="14" fill="#17213f" stroke="#2d3d6c"/>
+  <rect x="880" y="370" width="340" height="300" rx="14" fill="#17213f" stroke="#2d3d6c"/>
+  <text x="450" y="100" fill="#e8eefc" font-family="Arial, sans-serif" font-size="34" text-anchor="middle">Main Gameplay</text>
+  <text x="450" y="150" fill="#aab8d8" font-family="Arial, sans-serif" font-size="22" text-anchor="middle">Question + Yes/No Response Area</text>
+  <rect x="120" y="520" width="660" height="56" rx="8" fill="#22335f"/>
+  <text x="450" y="556" fill="#dbe6ff" font-family="Arial, sans-serif" font-size="24" text-anchor="middle">Is the player in the NBA?</text>
+  <text x="1050" y="210" fill="#e8eefc" font-family="Arial, sans-serif" font-size="28" text-anchor="middle">History</text>
+  <text x="1050" y="530" fill="#e8eefc" font-family="Arial, sans-serif" font-size="28" text-anchor="middle">Leaderboard</text>
+</svg>

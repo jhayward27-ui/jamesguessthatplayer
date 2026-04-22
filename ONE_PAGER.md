@@ -1,61 +1,63 @@
 # Guess The Athlete Game - One Pager
 
-## Project Snapshot
+## What this project is
 
-**Guess The Athlete Game** is a browser-based sports guessing game where the computer chooses a player from the four major North American leagues (NBA, NFL, MLB, NHL).  
-Players ask yes/no questions, use guided deduction, or submit direct guesses to identify the hidden athlete in **under 25 questions**.
+This is a sports guessing game I built in HTML, CSS, and JavaScript.
 
-## What It Does
+The game picks a random athlete from the 4 major North American leagues:
+- NBA
+- NFL
+- MLB
+- NHL
 
-- Randomly selects an athlete from a multi-sport dataset.
-- Answers user prompts in a strict yes/no format.
-- Supports guided deduction mode to narrow possibilities quickly.
-- Tracks question count and encourages efficient guessing.
-- Includes an in-browser leaderboard for completed rounds.
+You ask yes/no questions and try to figure out who the player is in under 25 questions.
 
-## Why This Project
+## How it works
 
-This project combines sports knowledge with game logic and lightweight front-end development in a single-page format.  
-It is designed to be fast to run, easy to update, and easy to deploy.
+- The app chooses one hidden player from the dataset.
+- You can ask questions about team, league, conference, division, number, position, active/retired status, and more.
+- The game replies with yes/no answers.
+- You can make a direct guess at any time.
+- There is also a Deduce mode to narrow down players faster.
 
-## Tech + Structure
+## Main features
 
-- **Stack:** HTML, CSS, JavaScript (no build step)
-- **Main game file:** `index.html`
-- **Extra mini-game:** `existential-snake.html`
-- **Deployment helpers:** `publish.sh`, `quick-publish.sh`
+- Home screen + playable game screen
+- Expanded player pool with mostly current players
+- Leaderboard tracking in local storage
+- Quick publish scripts for pushing updates to GitHub
 
-## Run
+## Project files
 
-Open `index.html` directly in a browser, or serve the folder with any static server.
+- `index.html` - main game
+- `project-overview.html` - clean showcase page for GitHub Pages
+- `publish.sh` - commit + push with a custom message
+- `quick-publish.sh` - commit + push with an auto message
 
-## Important Screenshots
+## Run it
 
-Add image files to `screenshots/` using the names below.
+Open `index.html` in a browser, or host the folder with a basic static server.
 
-### 1) Home Page
+## Important screenshots
+
+Put screenshots in the `screenshots/` folder using these names:
+
+### Home Page
 ![Home Page](screenshots/01-home-page.png)
 
-### 2) Main Gameplay (Question + Answer)
+### Main Gameplay
 ![Main Gameplay](screenshots/02-main-gameplay.png)
 
-### 3) Deduce Mode Panel
+### Deduce Mode
 ![Deduce Mode](screenshots/03-deduce-panel.png)
 
-### 4) Correct Guess / Round Win
-![Round Win](screenshots/04-correct-guess.png)
+### Correct Guess
+![Correct Guess](screenshots/04-correct-guess.png)
 
-### 5) Leaderboard View
+### Leaderboard
 ![Leaderboard](screenshots/05-leaderboard.png)
 
-## Repository
+## Links
 
-[https://github.com/jhayward27-ui/jamesguessthatplayer](https://github.com/jhayward27-ui/jamesguessthatplayer)
-
-## GitHub Pages Presentation
-
-A polished web version of this one-pager is available in:
-
-- `project-overview.html`
-
-Use this as your showcase page on GitHub Pages.
+- Repo: [https://github.com/jhayward27-ui/jamesguessthatplayer](https://github.com/jhayward27-ui/jamesguessthatplayer)
+- GitHub Pages showcase: `project-overview.html`

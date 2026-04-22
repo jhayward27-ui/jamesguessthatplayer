@@ -10,7 +10,6 @@ The computer picks an athlete from the four major North American sports (NBA, NF
 ## Files
 
 - `index.html` — main guessing game (single HTML file, no build step).
-- `existential-snake.html` — separate mini-game (Existential Snake: The Slab).
 - `publish.sh` — one-command script to commit and push to this repo.
 - `quick-publish.sh` — no-argument publish script with timestamp message.
 
