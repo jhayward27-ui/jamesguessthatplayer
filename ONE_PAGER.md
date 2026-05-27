@@ -60,4 +60,6 @@ Put screenshots in the `screenshots/` folder using these names:
 ## Links
 
 - Repo: [https://github.com/jhayward27-ui/jamesguessthatplayer](https://github.com/jhayward27-ui/jamesguessthatplayer)
-- GitHub Pages showcase: `project-overview.html`
+- Play online: [https://jhayward27-ui.github.io/jamesguessthatplayer/](https://jhayward27-ui.github.io/jamesguessthatplayer/)
+- Project slideshow: [https://jhayward27-ui.github.io/jamesguessthatplayer/presentation.html](https://jhayward27-ui.github.io/jamesguessthatplayer/presentation.html)
+- GitHub Pages showcase: [project-overview.html](project-overview.html)

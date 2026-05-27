@@ -5,11 +5,12 @@ The computer picks an athlete from the four major North American sports (NBA, NF
 ## Run the game
 
 - Open `index.html` in your browser (double-click or drag into a tab), or serve the folder with any static server.
-- Optional: enable **GitHub Pages** on this repo and use the site URL to play online.
+- **Online (GitHub Pages):** [Play the game](https://jhayward27-ui.github.io/jamesguessthatplayer/) · [Project slideshow](https://jhayward27-ui.github.io/jamesguessthatplayer/presentation.html)
 
 ## Files
 
 - `index.html` — main guessing game (single HTML file, no build step).
+- `presentation.html` — project slideshow for demos and class presentations.
 - `publish.sh` — one-command script to commit and push to this repo.
 - `quick-publish.sh` — no-argument publish script with timestamp message.
 
